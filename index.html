@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>हरी चर्चा - कथा बुकिंग</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #05070f 0%, #0d0a21 50%, #1a0524 100%);
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --gold-glow: #ffb800;
+            --krishna-blue: #00e5ff;
+            --available-white: #ffffff;
+            --my-booked: #00e676;
+            --other-booked: #ff1744;
+            --text-light: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            overflow: hidden; /* नो-स्क्रॉल */
+            position: relative;
+        }
+
+        /* 🌸 LIVE FALLING FLOWERS ANIMATION EFFECT 🌸 */
+        .flower-drop {
+            position: absolute;
+            top: -20px;
+            font-size: 14px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* ✨ CUTE RADHE KRISHNA LIVE STICKERS ✨ */
+        .krishna-sticker {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            filter: drop-shadow(0 0 12px var(--krishna-blue));
+            animation: floatSticker 5s ease-in-out infinite;
+        }
+        .sticker-flute {
+            top: 6%;
+            left: 5%;
+            width: 70px;
+            transform: rotate(-15deg);
+        }
+        .sticker-matki {
+            bottom: 6%;
+            right: 5%;
+            width: 60px;
+            filter: drop-shadow(0 0 12px var(--gold-glow));
+            animation-duration: 6s;
+        }
+
+        @keyframes floatSticker {
+            0%, 100% { transform: translateY(0px) rotate(-15deg); }
+            50% { transform: translateY(-8px) rotate(-10deg); }
+        }
+
+        /* Language & Top Buttons Container */
+        .top-controls-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+        }
+        .btn-lang, .btn-logout {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.7rem;
+            transition: 0.3s;
+        }
+        .btn-logout {
+            background: rgba(255, 23, 68, 0.15);
+            border-color: rgba(255, 23, 68, 0.3);
+            display: none;
+        }
+        .btn-logout:hover {
+            background: rgba(255, 23, 68, 0.3);
+            box-shadow: 0 0 10px rgba(255, 23, 68, 0.4);
+        }
+
+        /* Premium Container */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.1rem 0.8rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            width: 100%;
+            max-width: 460px;
+            z-index: 5;
+            position: relative;
+        }
+
+        /* LOGIN PAGE */
+        #login-page {
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+            padding: 2rem 1rem;
+        }
+        .logo-area h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--krishna-blue), var(--gold-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.2rem;
+            filter: drop-shadow(0 0 15px rgba(0,229,255,0.2));
+        }
+        .logo-area p { font-size: 0.85rem; color: #94a3b8; margin-bottom: 2rem; }
+        .input-group input {
+            width: 100%; padding: 1rem; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            color: #fff; font-size: 1rem; outline: none; text-align: center;
+        }
+        .input-group input:focus { border-color: var(--krishna-blue); box-shadow: 0 0 15px rgba(0,229,255,0.2); }
+        
+        /* Pulse Button */
+        .btn-modern {
+            width: 100%; margin-top: 1.2rem; padding: 1rem;
+            background: linear-gradient(135deg, #00e5ff, #9333ea);
+            border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 229, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 229, 255, 0); }
+        }
+
+        /* DASHBOARD UI */
+        #dashboard-page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .dash-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 0.6rem;
+            width: 100%;
+        }
+        .welcome-msg { 
+            font-size: 0.88rem; font-weight: 500; color: var(--text-light);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
+        }
+        .welcome-msg span { color: var(--gold-glow); font-weight: 700; text-shadow: 0 0 8px rgba(255,184,0,0.3); }
+        
+        /* FILTERS BAR */
+        .filter-bar {
+            display: flex;
+            width: 100%;
+            gap: 6px;
+            margin: 0.5rem 0 0.8rem 0;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .filter-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 0.4rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .filter-btn.active {
+            background: rgba(0, 229, 255, 0.12);
+            color: var(--krishna-blue);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        /* GRID TYPE TIMETABLE FORMAT */
+        .katha-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table-header-row th {
+            padding: 4px 2px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 500;
+            text-align: center;
+        }
+        .table-header-row th.day-th { text-align: left; width: 18%; font-weight: 700; color: var(--text-light); font-size: 0.85rem; }
+        .table-header-row th.time-th { width: 41%; color: var(--gold-glow); font-weight: 600; }
+
+        .day-tr { border-bottom: 1px solid rgba(255, 255, 255, 0.06); transition: opacity 0.2s; }
+        .day-tr:last-child { border-bottom: none; }
+
+        .day-td-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--krishna-blue);
+            text-align: left;
+            padding: 6px 0;
+            text-shadow: 0 0 8px rgba(0,229,255,0.2);
+        }
+
+        .slots-cell-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            padding: 5px 2px;
+        }
+        .sep-left-margin { margin-left: 8px; }
+
+        /* COMPACT SLOT CARD WITH GLOW */
+        .slot-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 6px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+        .slot-user-txt {
+            font-size: 0.7rem; font-weight: 600;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            padding: 0 2px; text-align: center;
+        }
+
+        .slot-card.available { color: rgba(255, 255, 255, 0.5); }
+        .slot-card.available:hover { border-color: var(--krishna-blue); background: rgba(0,229,255,0.03); }
+        
+        .slot-card.my-book {
+            background: rgba(0, 230, 118, 0.06);
+            border: 1.5px solid var(--my-booked);
+            color: var(--my-booked);
+            box-shadow: 0 0 10px rgba(0, 230, 118, 0.3);
+            animation: pulseActive 2s infinite;
+        }
+        @keyframes pulseActive {
+            0%, 100% { box-shadow: 0 0 8px rgba(0, 230, 118, 0.3); }
+            50% { box-shadow: 0 0 14px rgba(0, 230, 118, 0.6); }
+        }
+
+        .slot-card.other-book {
+            background: rgba(255, 23, 68, 0.04);
+            border: 1px solid var(--other-booked);
+            color: var(--other-booked);
+        }
+
+        /* BRANDING FOOTER */
+        .footer-branding {
+            text-align: center;
+            margin-top: 12px;
+            font-size: 0.68rem;
+            color: rgba(148, 163, 184, 0.45);
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+        .footer-branding a { color: rgba(148, 163, 184, 0.6); text-decoration: none; transition: color 0.2s; }
+        .footer-branding a:hover { color: var(--krishna-blue); }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 10, 0.8); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100; opacity: 0; pointer-events: none; transition: 0.3s; padding: 15px;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { width: 100%; max-width: 320px; text-align: center; padding: 1.5rem; }
+        .modal-box h3 { margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--gold-glow); }
+        .modal-box p { font-size: 0.85rem; color: #cbd5e1; margin-bottom: 1.2rem; }
+        .modal-btns { display: flex; gap: 0.6rem; justify-content: center; }
+        .modal-btns button { padding: 0.5rem 1.2rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.85rem; }
+        .btn-confirm { background: var(--my-booked); color: black; font-weight: 700; }
+        .btn-cancel { background: rgba(255,255,255,0.08); color: white; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ✅ Haricharcha Katha TT प्रोजेक्ट के क्रेडेंशियल्स[span_0](start_span)[span_0](end_span)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAK5zYnw8E0o_RGDY8zVP4PNZJ5D7vz8vc",
+            authDomain: "haricharcha-katha-tt.firebaseapp.com",
+            databaseURL: "https://haricharcha-katha-tt-default-rtdb.firebaseio.com",
+            projectId: "haricharcha-katha-tt",
+            storageBucket: "haricharcha-katha-tt.firebasestorage.app",
+            messagingSenderId: "748434401849",
+            appId: "1:748434401849:web:ed80153e03a1d954aa7be8",
+            measurementId: "G-MZKNV3CGV0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let currentLang = "hi"; 
+        let currentUserName = "";
+        let selectedSlotId = null;
+        let selectedSlotAction = "";
+        let currentFilter = "all"; 
+
+        // 🌟 हिंदी में नाम बदलकर 'ऑल शेड्यूल' और 'माय शेड्यूल' किया गया है
+        const langData = {
+            hi: {
+                title: "हरी चर्चा", subtitle: "श्री राधा कृष्ण कथा बुकिंग", placeholder: "अपना नाम यहाँ लिखें...", loginBtn: "प्रवेश करें 🦚",
+                welcome: "राधे राधे, ", allSchedule: "ऑल शेड्यूल 🌐", mySchedule: "माय शेड्यूल 🌸", logout: "बाहर निकलें 🚪",
+                available: "खाली है", alertOther: "यह कथा पहले से बुक है! 🙏", bookHead: "कथा बुकिंग पुष्टि 🦚", 
+                bookBody: "क्या आप इस समय पर कथा कहने का संकल्प लेना चाहते हैं?",
+                removeHead: "बुकिंग हटाने की पुष्टि ⚠️", removeBody: "क्या आप अपनी कथा बुकिंग हटाना चाहते हैं?", yes: "हाँ", no: "नहीं",
+                katha1: "कथा 1", katha2: "कथा 2", dayHead: "दिन", timeHead: "समय"
+            },
+            en: {
+                title: "Hari Charcha", subtitle: "Katha Booking Service", placeholder: "Enter your name...", loginBtn: "Enter App 🦚",
+                welcome: "Radhe Radhe, ", allSchedule: "All Schedule 🌐", mySchedule: "My Schedule 🌸", logout: "Logout 🚪",
+                available: "Available", alertOther: "This slot is already booked! 🙏", bookHead: "Confirm Booking 🦚", 
+                bookBody: "Do you want to book this slot for Katha?",
+                removeHead: "Cancel Booking ⚠️", removeBody: "Are you sure you want to remove your booking?", yes: "Yes", no: "No",
+                katha1: "Katha 1", katha2: "Katha 2", dayHead: "Day", timeHead: "Time"
+            }
+        };
+
+        const daysHi = ["सोम", "मंगल", "बुध", "गुरु", "शुक्र", "शनि", "रवि"];
+        const daysEn = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        const daysFullEn = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        const loginPage = document.getElementById('login-page');
+        const dashboardPage = document.getElementById('dashboard-page');
+        const usernameInput = document.getElementById('username');
+        const loginBtn = document.getElementById('login-btn');
+        const displayUser = document.getElementById('display-user');
+        const customModal = document.getElementById('custom-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const confirmModalBtn = document.getElementById('confirm-modal-btn');
+        const cancelModalBtn = document.getElementById('cancel-modal-btn');
+        
+        const langToggleBtn = document.getElementById('lang-toggle-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const filterAllBtn = document.getElementById('filter-all');
+        const filterMyBtn = document.getElementById('filter-my');
+
+        langToggleBtn.addEventListener('click', () => {
+            currentLang = currentLang === "hi" ? "en" : "hi";
+            langToggleBtn.innerHTML = `🌐 ${currentLang === "hi" ? "English" : "हिंदी"}`;
+            updateStaticText();
+            if(dashboardPage.style.display === "block") {
+                buildGridTable();
+                listenToFirebase();
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            currentUserName = "";
+            usernameInput.value = "";
+            logoutBtn.style.display = "none";
+            dashboardPage.style.display = "none";
+            loginPage.style.display = "block";
+            currentFilter = "all"; 
+        });
+
+        filterAllBtn.addEventListener('click', () => {
+            currentFilter = "all";
+            filterAllBtn.classList.add('active');
+            filterMyBtn.classList.remove('active');
+            applyFilterLogic();
+        });
+
+        filterMyBtn.addEventListener('click', () => {
+            currentFilter = "my";
+            filterMyBtn.classList.add('active');
+            filterAllBtn.classList.remove('active');
+            applyFilterLogic();
+        });
+
+        function updateStaticText() {
+            const t = langData[currentLang];
+            document.getElementById('main-title').innerText = t.title;
+            document.getElementById('main-subtitle').innerText = t.subtitle;
+            usernameInput.placeholder = t.placeholder;
+            loginBtn.innerText = t.loginBtn;
+            document.getElementById('welcome-lbl').innerText = t.welcome;
+            filterAllBtn.innerText = t.allSchedule;
+            filterMyBtn.innerText = t.mySchedule;
+            logoutBtn.innerText = t.logout;
+        }
+
+        loginBtn.addEventListener('click', () => {
+            const name = usernameInput.value.trim();
+            if(name === "") { alert(currentLang === "hi" ? "अपना नाम लिखें!" : "Enter name!"); return; }
+            currentUserName = name;
+            displayUser.innerText = currentUserName;
+            loginPage.style.display = "none";
+            dashboardPage.style.display = "block";
+            logoutBtn.style.display = "block"; 
+            
+            filterAllBtn.classList.add('active');
+            filterMyBtn.classList.remove('active');
+            
+            buildGridTable();
+            listenToFirebase();
+        });
+
+        function buildGridTable() {
+            const tbody = document.getElementById('table-tbody');
+            const thDay = document.getElementById('th-day-label');
+            const thTime = document.getElementById('th-time-label');
+            
+            const t = langData[currentLang];
+            thDay.innerText = t.dayHead;
+            thTime.innerText = t.timeHead;
+
+            tbody.innerHTML = "";
+            const daysList = currentLang === "hi" ? daysHi : daysEn;
+
+            daysFullEn.forEach((dayFull, index) => {
+                const dayDisplay = daysList[index];
+                const tr = document.createElement('tr');
+                tr.className = "day-tr";
+                tr.setAttribute('data-day', dayFull);
+
+                const dayTd = document.createElement('td');
+                dayTd.className = "day-td-label";
+                dayTd.innerText = dayDisplay;
+                tr.appendChild(dayTd);
+
+                const td5PM = document.createElement('td');
+                const wrapper5 = document.createElement('div');
+                wrapper5.className = "slots-cell-wrapper";
+                wrapper5.appendChild(createSlotCard(dayFull, "5PM", "Katha1"));
+                wrapper5.appendChild(createSlotCard(dayFull, "5PM", "Katha2"));
+                td5PM.appendChild(wrapper5);
+                tr.appendChild(td5PM);
+
+                const td7PM = document.createElement('td');
+                const wrapper7 = document.createElement('div');
+                wrapper7.className = "slots-cell-wrapper sep-left-margin";
+                wrapper7.appendChild(createSlotCard(dayFull, "7PM", "Katha1"));
+                wrapper7.appendChild(createSlotCard(dayFull, "7PM", "Katha2"));
+                td7PM.appendChild(wrapper7);
+                tr.appendChild(td7PM);
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function createSlotCard(dayFull, time, kathaType) {
+            const slotId = `${dayFull}_${time}_${kathaType}`;
+            const card = document.createElement('div');
+            card.id = slotId;
+            card.className = "slot-card available";
+            
+            const t = langData[currentLang];
+            const defaultText = kathaType === "Katha1" ? t.katha1 : t.katha2;
+
+            card.innerHTML = `<div class="slot-user-txt">${defaultText}</div>`;
+
+            card.addEventListener('click', () => handleCardClick(slotId, card));
+            card.addEventListener('dblclick', () => handleCardDblClick(slotId, card));
+
+            return card;
+        }
+
+        function listenToFirebase() {
+            const dbRef = ref(db, 'hari_charcha_slots');
+            onValue(dbRef, (snapshot) => {
+                const data = snapshot.val() || {};
+                const t = langData[currentLang];
+
+                document.querySelectorAll('.slot-card').forEach(card => {
+                    card.className = "slot-card available";
+                    const isKatha1 = card.id.includes("Katha1");
+                    card.querySelector('.slot-user-txt').innerText = isKatha1 ? t.katha1 : t.katha2;
+                });
+
+                for (let id in data) {
+                    const card = document.getElementById(id);
+                    if(card) {
+                        const bookedBy = data[id].bookedBy;
+                        if(bookedBy === currentUserName) {
+                            card.className = "slot-card my-book";
+                        } else {
+                            card.className = "slot-card other-book";
+                        }
+                        card.querySelector('.slot-user-txt').innerText = bookedBy;
+                    }
+                }
+                applyFilterLogic(); 
+            });
+        }
+
+        function applyFilterLogic() {
+            if (currentFilter === "all") {
+                document.querySelectorAll('.day-tr').forEach(tr => tr.style.display = "table-row");
+                document.querySelectorAll('.slot-card').forEach(card => card.style.opacity = "1");
+            } else if (currentFilter === "my") {
+                document.querySelectorAll('.day-tr').forEach(tr => {
+                    const hasMyBook = tr.querySelector('.my-book');
+                    if (hasMyBook) {
+                        tr.style.display = "table-row";
+                        tr.querySelectorAll('.slot-card').forEach(card => {
+                            if (card.classList.contains('my-book')) {
+                                card.style.opacity = "1";
+                            } else {
+                                card.style.opacity = "0.2";
+                            }
+                        });
+                    } else {
+                        tr.style.display = "none";
+                    }
+                });
+            }
+        }
+
+        function handleCardClick(id, card) {
+            const t = langData[currentLang];
+            if(card.classList.contains('other-book')) { alert(t.alertOther); return; }
+            if(card.classList.contains('my-book')) return;
+
+            selectedSlotId = id; selectedSlotAction = "BOOK";
+            modalTitle.innerText = t.bookHead; modalBody.innerText = t.bookBody;
+            confirmModalBtn.innerText = t.yes; cancelModalBtn.innerText = t.no;
+            customModal.classList.add('active');
+        }
+
+        function handleCardDblClick(id, card) {
+            const t = langData[currentLang];
+            if(card.classList.contains('my-book')) {
+                selectedSlotId = id; selectedSlotAction = "REMOVE";
+                modalTitle.innerText = t.removeHead; modalBody.innerText = t.removeBody;
+                confirmModalBtn.innerText = t.yes; cancelModalBtn.innerText = t.no;
+                customModal.classList.add('active');
+            }
+        }
+
+        confirmModalBtn.addEventListener('click', () => {
+            if(!selectedSlotId) return;
+            if(selectedSlotAction === "BOOK") {
+                set(ref(db, 'hari_charcha_slots/' + selectedSlotId), { bookedBy: currentUserName });
+            } else if(selectedSlotAction === "REMOVE") {
+                set(ref(db, 'hari_charcha_slots/' + selectedSlotId), null);
+            }
+            customModal.classList.remove('active'); selectedSlotId = null;
+        });
+
+        cancelModalBtn.addEventListener('click', () => { customModal.classList.remove('active'); selectedSlotId = null; });
+
+        function createFallingFlowers() {
+            const flowers = ['🌸', '✨', '🌹', '🌼'];
+            setInterval(() => {
+                const flower = document.createElement('div');
+                flower.className = 'flower-drop';
+                flower.innerText = flowers[Math.floor(Math.random() * flowers.length)];
+                flower.style.left = Math.random() * 100 + 'vw';
+                flower.style.animationDuration = (Math.random() * 3 + 4) + 's'; 
+                document.body.appendChild(flower);
+                setTimeout(() => { flower.remove(); }, 7000);
+            }, 450);
+        }
+
+        createFallingFlowers();
+        updateStaticText();
+    </script>
+</head>
+<body>
+
+    <div class="top-controls-container">
+        <button id="lang-toggle-btn" class="btn-lang">🌐 English</button>
+        <button id="logout-btn" class="btn-logout">बाहर निकलें 🚪</button>
+    </div>
+
+    <svg class="krishna-sticker sticker-flute" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 10C42 25 30 35 15 42C30 48 42 52 50 70C58 52 70 48 85 42C70 35 58 25 50 10Z" fill="#00e5ff" opacity="0.85"/>
+        <circle cx="50" cy="42" r="10" fill="#ffb800"/>
+        <rect x="10" y="65" width="80" height="7" rx="3.5" fill="#ffb800" transform="rotate(-15, 50, 68)"/>
+        <circle cx="25" cy="62" r="2" fill="#05070f"/>
+        <circle cx="40" cy="58" r="2" fill="#05070f"/>
+        <circle cx="55" cy="54" r="2" fill="#05070f"/>
+    </svg>
+
+    <svg class="krishna-sticker sticker-matki" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="60" rx="35" ry="30" fill="#f59e0b"/>
+        <rect x="30" y="25" width="40" height="8" rx="4" fill="#d97706"/>
+        <path d="M32 27C35 40 45 42 50 35C55 45 62 38 68 27Z" fill="#ffffff"/>
+        <circle cx="42" cy="42" r="5" fill="#ffffff"/>
+        <circle cx="55" cy="45" r="4" fill="#ffffff"/>
+    </svg>
+
+    <div id="login-page" class="glass-panel">
+        <div class="logo-area">
+            <h1 id="main-title">हरी चर्चा</h1>
+            <p id="main-subtitle">श्री राधा कृष्ण कथा बुकिंग</p>
+        </div>
+        <div class="input-group">
+            <input type="text" id="username" placeholder="अपना नाम यहाँ लिखें..." autocomplete="off">
+        </div>
+        <button id="login-btn" class="btn-modern">प्रवेश करें 🦚</button>
+    </div>
+
+    <div id="dashboard-page" class="glass-panel">
+        <div class="dash-header">
+            <div class="welcome-msg"><span id="welcome-lbl">राधे राधे, </span><span id="display-user">भक्त</span>! ✨👋</div>
+        </div>
+
+        <!-- 🔍 UPDATED FILTER BUTTON LABELS -->
+        <div class="filter-bar">
+            <button id="filter-all" class="filter-btn active">ऑल शेड्यूल 🌐</button>
+            <button id="filter-my" class="filter-btn">माय शेड्यूल 🌸</button>
+        </div>
+
+        <table class="katha-table">
+            <thead>
+                <tr class="table-header-row">
+                    <th id="th-day-label" class="day-th">Day</th>
+                    <th id="th-time-label" colspan="2" style="text-align: center; letter-spacing: 1px;">Time</th>
+                </tr>
+                <tr class="table-header-row">
+                    <th></th>
+                    <th class="time-th">[5 PM]</th>
+                    <th class="time-th" style="padding-left: 8px;">[7 PM]</th>
+                </tr>
+            </thead>
+            <tbody id="table-tbody">
+            </tbody>
+        </table>
+
+        <div class="footer-branding">
+            Developed by <a href="https://instagram.com/akshaetshukla.dev" target="_blank">IG: @akshaetshukla.dev</a>
+        </div>
+    </div>
+
+    <div id="custom-modal" class="modal-overlay">
+        <div class="glass-panel modal-box">
+            <h3 id="modal-title">पुष्टि करें</h3>
+            <p id="modal-body">क्या आप सहमत हैं?</p>
+            <div class="modal-btns">
+                <button id="confirm-modal-btn" class="btn-confirm">हाँ</button>
+                <button id="cancel-modal-btn" class="btn-cancel">रद्द करें</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
